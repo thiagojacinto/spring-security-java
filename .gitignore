@@ -24,3 +24,7 @@ hs_err_pid*
 
 # system files
 .DS_Store
+
+# MVN files and config
+.mvn
+mvnw*
