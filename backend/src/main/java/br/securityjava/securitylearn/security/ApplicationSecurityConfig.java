@@ -37,6 +37,7 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
 			.authorizeRequests()
 			.antMatchers("/", "index", "/css/index.css", "/js/index.js")	// Used to whitelist access permission
 			.permitAll()	// then, permits access to predefined Matchers
+			.antMatchers("/api/**").hasRole(ApplicationUserRole.USER.name()) 	// Used to protect access ONLY by ROLE_USER
 			.anyRequest()
 			.authenticated()
 			.and()
