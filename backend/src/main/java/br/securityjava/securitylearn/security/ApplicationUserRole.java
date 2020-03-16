@@ -8,7 +8,8 @@ import static br.securityjava.securitylearn.security.ApplicationUserPermission.*
 public enum ApplicationUserRole {
 	
 	USER(Sets.newHashSet()),
-	ADMIN(Sets.newHashSet(PRODUCT_READ, PRODUCT_WRITE, USER_READ, USER_WRITE)); 
+	ADMIN(Sets.newHashSet(PRODUCT_READ, PRODUCT_WRITE, USER_READ, USER_WRITE)),
+	ADMINTRAINEE(Sets.newHashSet(PRODUCT_READ, USER_READ)); 
 	
 	private final Set<ApplicationUserPermission> permissions;
 
