@@ -34,6 +34,10 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
 		 */
 
 		http
+		
+		.csrf()
+		.disable()	//TODO: next section
+		
 		.authorizeRequests()
 		.antMatchers("/", "index", "/css/index.css", "/js/index.js")	// Used to whitelist access permission
 		.permitAll()	// then, permits access to predefined Matchers
