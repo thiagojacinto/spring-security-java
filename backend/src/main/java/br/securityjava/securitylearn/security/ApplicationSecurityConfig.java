@@ -15,10 +15,10 @@ import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 @Configuration
 @EnableWebSecurity
 public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
-	
+
 	// Attributes
 	private final PasswordEncoder passwordEncoder;	// calls encoder to deal with password
-	
+
 	// Constructor
 	@Autowired
 	public ApplicationSecurityConfig(PasswordEncoder passwordEncoder) {
@@ -28,43 +28,51 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		
+
 		/*
 		 * ENFORCE authenticity of a client, for every request
 		 */
-		
+
 		http
-			.authorizeRequests()
-			.antMatchers("/", "index", "/css/index.css", "/js/index.js")	// Used to whitelist access permission
-			.permitAll()	// then, permits access to predefined Matchers
-			.antMatchers("/api/**").hasRole(ApplicationUserRole.USER.name()) 	// Used to protect access ONLY by ROLE_USER
-			.anyRequest()
-			.authenticated()
-			.and()
-			.httpBasic();
-		
+		.authorizeRequests()
+		.antMatchers("/", "index", "/css/index.css", "/js/index.js")	// Used to whitelist access permission
+		.permitAll()	// then, permits access to predefined Matchers
+		.antMatchers("/api/**").hasRole(ApplicationUserRole.USER.name()) 	// Used to protect access ONLY by ROLE_USER
+		.anyRequest()
+		.authenticated()
+		.and()
+		.httpBasic();
+
 	}
-	
+
 	@Override
 	@Bean
 	protected UserDetailsService userDetailsService() {
-		
+
 		UserDetails thisUserBuilder = User.builder()
-			.username("thiagojacinto")
-			.password(passwordEncoder.encode("password"))
-			.roles(ApplicationUserRole.USER.name()) 	// ROLE_USER
-			.build();
-		
+				.username("thiagojacinto")
+				.password(passwordEncoder.encode("password"))
+				.roles(ApplicationUserRole.USER.name()) 	// ROLE_USER
+				.build();
+
 		// creating an ADMIN role of User
 		UserDetails lindaUser = User.builder()
-			.username("linda")
-			.password(passwordEncoder.encode("password1234"))
-			.roles(ApplicationUserRole.ADMIN.name()) // ROLE_ADMIN
-			.build();
-		
+				.username("linda")
+				.password(passwordEncoder.encode("password1234"))
+				.roles(ApplicationUserRole.ADMIN.name()) // ROLE_ADMIN
+				.build();
+
+		// creating an ADMINTRAINEE role of User
+		UserDetails tomUser = User.builder()
+				.username("tomhashtag")
+				.password(passwordEncoder.encode("password1234"))
+				.roles(ApplicationUserRole.ADMINTRAINEE.name()) // ROLE_ADMINTRAINEE
+				.build();
+
 		return new InMemoryUserDetailsManager(
 				thisUserBuilder,
-				lindaUser
+				lindaUser,
+				tomUser
 				);
 	}
 
