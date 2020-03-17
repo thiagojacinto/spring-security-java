@@ -3,7 +3,6 @@ package br.securityjava.securitylearn.security;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -38,8 +37,12 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
 
 		http
 		
-		.csrf()
-		.disable()	//TODO: next section
+		.csrf()		// Cross sites request forgery: security measure
+		.disable()	// disable() -> when consumed by another service
+		
+		// config the CSRF handling -> when processed by the browser (normal users)
+//		.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+//		.and()
 		
 		.authorizeRequests()
 		.antMatchers("/", "index", "/css/index.css", "/js/index.js")	// Used to whitelist access permission
