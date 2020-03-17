@@ -3,6 +3,7 @@ package br.securityjava.securitylearn.user;
 import java.util.Arrays;
 import java.util.List;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,6 +26,7 @@ public class UserManagementController {
 	// Methods
 	
 	@GetMapping
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_ADMINTRAINEE')")
 	public List<User> getAllUsers() {
 		
 		// TODO real implementation
@@ -35,18 +37,21 @@ public class UserManagementController {
 	}
 	
 	@PostMapping
+	@PreAuthorize("hasAuthority('user:write')")
 	public void registerUser(@RequestBody User user) {
 		System.out.println(user);	// Placeholder
 		System.out.println("registerUser()");
 	}
 	
 	@DeleteMapping(path = "{userId}")
+	@PreAuthorize("hasAuthority('user:write')")
 	public void deleteUser(@PathVariable("userId") Integer userId) {
 		System.out.println("Delete: ID = " + userId);	// Placeholder
 		System.out.println("deleteUser()");
 	}
 	
 	@PutMapping(path = "{userId}")
+	@PreAuthorize("hasAuthority('user:write')")
 	public void updateUser(@PathVariable("userId") Integer userId, @RequestBody User updatedUser ) {
 		System.out.println(String.format("ID = %s; Updated = %s", userId, updatedUser));	// Placeholder
 		System.out.println("updateUser()");
