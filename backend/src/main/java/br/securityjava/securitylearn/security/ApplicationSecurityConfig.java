@@ -3,6 +3,7 @@ package br.securityjava.securitylearn.security;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -42,6 +43,12 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
 		.antMatchers("/", "index", "/css/index.css", "/js/index.js")	// Used to whitelist access permission
 		.permitAll()	// then, permits access to predefined Matchers
 		.antMatchers("/api/**").hasRole(ApplicationUserRole.USER.name()) 	// Used to protect access ONLY by ROLE_USER
+		
+		.antMatchers(HttpMethod.DELETE, "/management/api/**").hasAuthority(ApplicationUserPermission.PRODUCT_WRITE.getPermission())
+		.antMatchers(HttpMethod.POST, "/management/api/**").hasAuthority(ApplicationUserPermission.PRODUCT_WRITE.getPermission())
+		.antMatchers(HttpMethod.PUT, "/management/api/**").hasAuthority(ApplicationUserPermission.PRODUCT_WRITE.getPermission())
+		.antMatchers("/management/api/**").hasAnyRole(ApplicationUserRole.ADMIN.name(), ApplicationUserRole.ADMINTRAINEE.name())
+		
 		.anyRequest()
 		.authenticated()
 		.and()
@@ -56,21 +63,24 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
 		UserDetails thisUserBuilder = User.builder()
 				.username("thiagojacinto")
 				.password(passwordEncoder.encode("password"))
-				.roles(ApplicationUserRole.USER.name()) 	// ROLE_USER
+//				.roles(ApplicationUserRole.USER.name()) 	// ROLE_USER
+				.authorities(ApplicationUserRole.USER.getGrantedAuthorities())
 				.build();
 
 		// creating an ADMIN role of User
 		UserDetails lindaUser = User.builder()
 				.username("linda")
 				.password(passwordEncoder.encode("password1234"))
-				.roles(ApplicationUserRole.ADMIN.name()) // ROLE_ADMIN
+//				.roles(ApplicationUserRole.ADMIN.name()) // ROLE_ADMIN
+				.authorities(ApplicationUserRole.ADMIN.getGrantedAuthorities())
 				.build();
 
 		// creating an ADMINTRAINEE role of User
 		UserDetails tomUser = User.builder()
 				.username("tomhashtag")
 				.password(passwordEncoder.encode("password1234"))
-				.roles(ApplicationUserRole.ADMINTRAINEE.name()) // ROLE_ADMINTRAINEE
+//				.roles(ApplicationUserRole.ADMINTRAINEE.name()) // ROLE_ADMINTRAINEE
+				.authorities(ApplicationUserRole.ADMINTRAINEE.getGrantedAuthorities())
 				.build();
 
 		return new InMemoryUserDetailsManager(
