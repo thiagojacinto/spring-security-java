@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -15,6 +16,7 @@ import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 
 @Configuration
 @EnableWebSecurity
+@EnableGlobalMethodSecurity(prePostEnabled = true)	// To set permission based auth with ANNOTATIONS!
 public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	// Attributes
@@ -44,10 +46,11 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
 		.permitAll()	// then, permits access to predefined Matchers
 		.antMatchers("/api/**").hasRole(ApplicationUserRole.USER.name()) 	// Used to protect access ONLY by ROLE_USER
 		
-		.antMatchers(HttpMethod.DELETE, "/management/api/**").hasAuthority(ApplicationUserPermission.PRODUCT_WRITE.getPermission())
-		.antMatchers(HttpMethod.POST, "/management/api/**").hasAuthority(ApplicationUserPermission.PRODUCT_WRITE.getPermission())
-		.antMatchers(HttpMethod.PUT, "/management/api/**").hasAuthority(ApplicationUserPermission.PRODUCT_WRITE.getPermission())
-		.antMatchers("/management/api/**").hasAnyRole(ApplicationUserRole.ADMIN.name(), ApplicationUserRole.ADMINTRAINEE.name())
+		// the ORDER does matter on defining antMatchers
+//		.antMatchers(HttpMethod.DELETE, "/management/api/**").hasAuthority(ApplicationUserPermission.PRODUCT_WRITE.getPermission())
+//		.antMatchers(HttpMethod.POST, "/management/api/**").hasAuthority(ApplicationUserPermission.PRODUCT_WRITE.getPermission())
+//		.antMatchers(HttpMethod.PUT, "/management/api/**").hasAuthority(ApplicationUserPermission.PRODUCT_WRITE.getPermission())
+//		.antMatchers("/management/api/**").hasAnyRole(ApplicationUserRole.ADMIN.name(), ApplicationUserRole.ADMINTRAINEE.name())
 		
 		.anyRequest()
 		.authenticated()
