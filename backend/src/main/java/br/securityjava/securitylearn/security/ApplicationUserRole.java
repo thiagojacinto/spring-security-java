@@ -1,6 +1,11 @@
 package br.securityjava.securitylearn.security;
 
 import java.util.Set;
+import java.util.stream.Collectors;
+
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+
 import com.google.common.collect.Sets;
 
 import static br.securityjava.securitylearn.security.ApplicationUserPermission.*;
@@ -19,6 +24,17 @@ public enum ApplicationUserRole {
 	
 	public Set<ApplicationUserPermission> getPermissions() {
 		return permissions;
+	}
+	
+	public Set<SimpleGrantedAuthority> getGrantedAuthorities() {
+		
+		Set<SimpleGrantedAuthority> permissionsAuthorities =  getPermissions().stream()
+			.map(permission -> new SimpleGrantedAuthority(permission.getPermission()))
+			.collect(Collectors.toSet());
+		
+		permissionsAuthorities.add(new SimpleGrantedAuthority("ROLE_" + this.name()));
+		
+		return permissionsAuthorities;
 	}
 
 }
