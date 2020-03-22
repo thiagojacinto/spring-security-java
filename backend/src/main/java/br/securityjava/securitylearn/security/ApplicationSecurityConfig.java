@@ -58,7 +58,12 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
 		.anyRequest()
 		.authenticated()
 		.and()
-		.httpBasic();
+//		.httpBasic();	// used when basic auth is required. (simpler)
+		
+		.formLogin()	// using Form based auth (sophisticated)
+		.loginPage("/login").permitAll()	// change default login page
+		.defaultSuccessUrl("/products", true);	// change default redirect after login success
+		
 
 	}
 
