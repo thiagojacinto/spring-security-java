@@ -1,5 +1,7 @@
 package br.securityjava.securitylearn.security;
 
+import java.util.concurrent.TimeUnit;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -61,10 +63,16 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
 //		.httpBasic();	// used when basic auth is required. (simpler)
 		
 		.formLogin()	// using Form based auth (sophisticated)
-		.loginPage("/login").permitAll()	// change default login page
-		.defaultSuccessUrl("/products", true);	// change default redirect after login success
 		
-
+		// custom pages: login + successfully login redirects to
+		.loginPage("/login").permitAll()	// change default login page
+		.defaultSuccessUrl("/products", true)	// change default redirect after login success
+		
+		// Remember me feature
+		.and()
+		.rememberMe()	// default value = 2 weeks
+		.tokenValiditySeconds((int) TimeUnit.DAYS.toSeconds(21))
+		.key("somthingTHATneedsTObeVERYsecure");
 	}
 
 	@Override
