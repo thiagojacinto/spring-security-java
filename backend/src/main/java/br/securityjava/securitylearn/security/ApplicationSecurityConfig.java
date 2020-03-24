@@ -14,6 +14,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 @EnableWebSecurity
@@ -64,15 +65,29 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
 		
 		.formLogin()	// using Form based auth (sophisticated)
 		
-		// custom pages: login + successfully login redirects to
-		.loginPage("/login").permitAll()	// change default login page
-		.defaultSuccessUrl("/products", true)	// change default redirect after login success
+			// custom pages: login + successfully login redirects to
+			.loginPage("/login").permitAll()	// change default login page
+			.defaultSuccessUrl("/products", true)	// change default redirect after login success
+			.passwordParameter("password")
+			.usernameParameter("username")
 		
 		// Remember me feature
 		.and()
 		.rememberMe()	// default value = 2 weeks
-		.tokenValiditySeconds((int) TimeUnit.DAYS.toSeconds(21))
-		.key("somthingTHATneedsTObeVERYsecure");
+			.tokenValiditySeconds((int) TimeUnit.DAYS.toSeconds(21))
+			.key("somethingverysecured")
+			.rememberMeParameter("remember-me")	// names the cookie of rememberMe feature
+			// MUST be the same of `html`s tag ID & NAME
+			
+		// Clears login sessionId and remember-me cookies
+		.and()
+		.logout()
+			.logoutUrl("/logout")
+			.logoutRequestMatcher(new AntPathRequestMatcher("/logout", "GET"))	// just because csrf() is DISABLE, best practice is use POST
+			.clearAuthentication(true)
+			.invalidateHttpSession(true)
+			.deleteCookies("JSESSIONID", "remember-me")
+			.logoutSuccessUrl("/login");
 	}
 
 	@Override
