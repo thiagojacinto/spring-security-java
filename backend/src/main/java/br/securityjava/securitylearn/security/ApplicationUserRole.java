@@ -1,14 +1,16 @@
 package br.securityjava.securitylearn.security;
 
+import static br.securityjava.securitylearn.security.ApplicationUserPermission.PRODUCT_READ;
+import static br.securityjava.securitylearn.security.ApplicationUserPermission.PRODUCT_WRITE;
+import static br.securityjava.securitylearn.security.ApplicationUserPermission.USER_READ;
+import static br.securityjava.securitylearn.security.ApplicationUserPermission.USER_WRITE;
+
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import com.google.common.collect.Sets;
-
-import static br.securityjava.securitylearn.security.ApplicationUserPermission.*;
 
 public enum ApplicationUserRole {
 	
