@@ -8,6 +8,6 @@ public interface ApplicationUserDAO {
 	 * 	Being an interface facilitates the change of the real implementation
 	 */
 	
-	public Optional<ApplicationUser> selectAppUserByUsername(String username);
+	Optional<ApplicationUser> selectAppUserByUsername(String username);
 	
 }
