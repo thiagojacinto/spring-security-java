@@ -1,6 +1,6 @@
 # Spring Security
 
-A repo with learning purposes of walking into Spring Security development.
+A repo with learning purposes of walking into Spring Security development. This branch handles the **JWT implementation**, using [Java JWT](https://github.com/jwtk/jjwt). 
 
 ## Includes & usage:
 
