@@ -1,7 +1,5 @@
 package br.securityjava.securitylearn.security;
 
-import java.util.concurrent.TimeUnit;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,10 +9,11 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import br.securityjava.securitylearn.auth.ApplicationUserService;
+import br.securityjava.securitylearn.jwt.JwtUsernameAndPasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -50,6 +49,12 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
 //		.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
 //		.and()
 		
+			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+			.and()	// This informs that the session will be stateless = JWT way
+		
+		// Jwt Filter
+		.addFilter(new JwtUsernameAndPasswordAuthenticationFilter(authenticationManager()))
+		
 		.authorizeRequests()
 		.antMatchers("/", "index", "/css/index.css", "/js/index.js")	// Used to whitelist access permission
 		.permitAll()	// then, permits access to predefined Matchers
@@ -62,35 +67,42 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
 //		.antMatchers("/management/api/**").hasAnyRole(ApplicationUserRole.ADMIN.name(), ApplicationUserRole.ADMINTRAINEE.name())
 		
 		.anyRequest()
-		.authenticated()
-		.and()
+		.authenticated();
+		
+		/*
+		 * Authentication methods from this line:
+		 * 
+		 * 1) BASIC
+		 * 2) FORM BASED
+		 */
+//		.and()
 //		.httpBasic();	// used when basic auth is required. (simpler)
 		
-		.formLogin()	// using Form based auth (sophisticated)
-		
-			// custom pages: login + successfully login redirects to
-			.loginPage("/login").permitAll()	// change default login page
-			.defaultSuccessUrl("/products", true)	// change default redirect after login success
-			.passwordParameter("password")
-			.usernameParameter("username")
-		
-		// Remember me feature
-		.and()
-		.rememberMe()	// default value = 2 weeks
-			.tokenValiditySeconds((int) TimeUnit.DAYS.toSeconds(21))
-			.key("somethingverysecured")
-			.rememberMeParameter("remember-me")	// names the cookie of rememberMe feature
-			// MUST be the same of `html`s tag ID & NAME
-			
-		// Clears login sessionId and remember-me cookies
-		.and()
-		.logout()
-			.logoutUrl("/logout")
-			.logoutRequestMatcher(new AntPathRequestMatcher("/logout", "GET"))	// just because csrf() is DISABLE, best practice is use POST
-			.clearAuthentication(true)
-			.invalidateHttpSession(true)
-			.deleteCookies("JSESSIONID", "remember-me")
-			.logoutSuccessUrl("/login");
+//		.formLogin()	// using Form based auth (sophisticated)
+//		
+//			// custom pages: login + successfully login redirects to
+//			.loginPage("/login").permitAll()	// change default login page
+//			.defaultSuccessUrl("/products", true)	// change default redirect after login success
+//			.passwordParameter("password")
+//			.usernameParameter("username")
+//		
+//		// Remember me feature
+//		.and()
+//		.rememberMe()	// default value = 2 weeks
+//			.tokenValiditySeconds((int) TimeUnit.DAYS.toSeconds(21))
+//			.key("somethingverysecured")
+//			.rememberMeParameter("remember-me")	// names the cookie of rememberMe feature
+//			// MUST be the same of `html`s tag ID & NAME
+//			
+//		// Clears login sessionId and remember-me cookies
+//		.and()
+//		.logout()
+//			.logoutUrl("/logout")
+//			.logoutRequestMatcher(new AntPathRequestMatcher("/logout", "GET"))	// just because csrf() is DISABLE, best practice is use POST
+//			.clearAuthentication(true)
+//			.invalidateHttpSession(true)
+//			.deleteCookies("JSESSIONID", "remember-me")
+//			.logoutSuccessUrl("/login");
 	}
 	
 	@Override
