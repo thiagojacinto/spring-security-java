@@ -13,6 +13,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import br.securityjava.securitylearn.auth.ApplicationUserService;
+import br.securityjava.securitylearn.jwt.JwtTokenVerifier;
 import br.securityjava.securitylearn.jwt.JwtUsernameAndPasswordAuthenticationFilter;
 
 @Configuration
@@ -52,8 +53,11 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
 			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 			.and()	// This informs that the session will be stateless = JWT way
 		
-		// Jwt Filter
+		// Jwt Filters
+			// [1] AuthenticationFilter ONE
 		.addFilter(new JwtUsernameAndPasswordAuthenticationFilter(authenticationManager()))
+			// [2] Token verifier to each request of the previously authenticated client:
+		.addFilterAfter(new JwtTokenVerifier(), JwtUsernameAndPasswordAuthenticationFilter.class)
 		
 		.authorizeRequests()
 		.antMatchers("/", "index", "/css/index.css", "/js/index.js")	// Used to whitelist access permission
