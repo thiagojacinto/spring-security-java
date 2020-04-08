@@ -13,14 +13,12 @@ public class JwtConfig {
 	
 	private String secretKey;
 	private String tokenPrefix;
-	private String tokenExpirationAfterDays;
+	private Integer tokenExpirationAfterDays;
 	
 	// Constructor
-	public JwtConfig(String secretKey, String tokenPrefix, String tokenExpirationAfterDays) {
-		super();
-		this.secretKey = secretKey;
-		this.tokenPrefix = tokenPrefix;
-		this.tokenExpirationAfterDays = tokenExpirationAfterDays;
+	
+	public JwtConfig() {
+		// Empty constructor
 	}
 	
 	// Getters and Setters
@@ -33,7 +31,7 @@ public class JwtConfig {
 		return tokenPrefix;
 	}
 
-	public String getTokenExpirationAfterDays() {
+	public Integer getTokenExpirationAfterDays() {
 		return tokenExpirationAfterDays;
 	}
 
@@ -45,7 +43,7 @@ public class JwtConfig {
 		this.tokenPrefix = tokenPrefix;
 	}
 
-	public void setTokenExpirationAfterDays(String tokenExpirationAfterDays) {
+	public void setTokenExpirationAfterDays(Integer tokenExpirationAfterDays) {
 		this.tokenExpirationAfterDays = tokenExpirationAfterDays;
 	}
 	
