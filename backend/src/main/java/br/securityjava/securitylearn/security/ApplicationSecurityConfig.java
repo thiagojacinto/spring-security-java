@@ -1,5 +1,7 @@
 package br.securityjava.securitylearn.security;
 
+import javax.crypto.SecretKey;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,6 +15,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import br.securityjava.securitylearn.auth.ApplicationUserService;
+import br.securityjava.securitylearn.jwt.JwtConfig;
 import br.securityjava.securitylearn.jwt.JwtTokenVerifier;
 import br.securityjava.securitylearn.jwt.JwtUsernameAndPasswordAuthenticationFilter;
 
@@ -24,14 +27,23 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
 	// Attributes
 	private final PasswordEncoder passwordEncoder;	// calls encoder to deal with password
 	private final ApplicationUserService applicationUserService;
+	// JwtConfig injection
+	private final JwtConfig jwtConfig;
+	private final SecretKey secretKey;
 
 	// Constructor
 	@Autowired
 	public ApplicationSecurityConfig(PasswordEncoder passwordEncoder, 
-			ApplicationUserService applicationUserService) {
+			ApplicationUserService applicationUserService,
+			JwtConfig jwtConfig,
+			SecretKey secretKey
+			) {
 		
 		this.passwordEncoder = passwordEncoder;
 		this.applicationUserService = applicationUserService;
+		
+		this.jwtConfig = jwtConfig;
+		this.secretKey = secretKey;
 	}
 
 	@Override
@@ -55,9 +67,9 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
 		
 		// Jwt Filters
 			// [1] AuthenticationFilter ONE
-		.addFilter(new JwtUsernameAndPasswordAuthenticationFilter(authenticationManager()))
+		.addFilter(new JwtUsernameAndPasswordAuthenticationFilter(authenticationManager(), jwtConfig, secretKey))
 			// [2] Token verifier to each request of the previously authenticated client:
-		.addFilterAfter(new JwtTokenVerifier(), JwtUsernameAndPasswordAuthenticationFilter.class)
+		.addFilterAfter(new JwtTokenVerifier(jwtConfig, secretKey), JwtUsernameAndPasswordAuthenticationFilter.class)
 		
 		.authorizeRequests()
 		.antMatchers("/", "index", "/css/index.css", "/js/index.js")	// Used to whitelist access permission

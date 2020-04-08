@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.crypto.SecretKey;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -23,10 +24,21 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.security.Keys;
 
 public class JwtTokenVerifier extends OncePerRequestFilter {
 	
+	// JwtConfig files
+	
+	private final JwtConfig jwtConfig;
+	private final SecretKey secretKey;
+	
+	// Constructor
+	public JwtTokenVerifier(JwtConfig jwtConfig, SecretKey secretKey) {
+		this.jwtConfig = jwtConfig;
+		this.secretKey = secretKey;
+	}
+
+
 	/*
 	 * Invoke THIS filter just ONCE for every single request from the client.
 	 * 
@@ -39,22 +51,21 @@ public class JwtTokenVerifier extends OncePerRequestFilter {
 			FilterChain filterChain)
 			throws ServletException, IOException {
 		
-		String authorizationHeader = request.getHeader("Authorization");
+		String authorizationHeader = request.getHeader(jwtConfig.getAuthorizationHeader());
 		
 		// Verify if header is null or does NOT have `Bearer` at begining
-		if (Strings.isNullOrEmpty(authorizationHeader) || authorizationHeader.startsWith("Bearer ")) {
+		if (Strings.isNullOrEmpty(authorizationHeader) || authorizationHeader.startsWith(jwtConfig.getTokenPrefix())) {
 			filterChain.doFilter(request, response);
 			return;
 		}
-		String token = authorizationHeader.replace("Bearer ", "");
+		String token = authorizationHeader.replace(jwtConfig.getTokenPrefix(), "");
 		
 		try {
 			
 			// Replaces `Bearer` for empty, from the token input header
-			String secretKey = "verysecureverysecureverysecureverysecureverysecure";
 			
 			Jws<Claims> claimsJws = Jwts.parserBuilder()
-					.setSigningKey(Keys.hmacShaKeyFor(secretKey.getBytes()))
+					.setSigningKey(secretKey)
 					.build()
 					.parseClaimsJws(token);
 			
