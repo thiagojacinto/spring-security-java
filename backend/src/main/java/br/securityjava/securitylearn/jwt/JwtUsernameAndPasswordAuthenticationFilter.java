@@ -77,7 +77,7 @@ public class JwtUsernameAndPasswordAuthenticationFilter extends UsernamePassword
 				.setSubject(authResult.getName())
 				.claim("authorities", authResult.getAuthorities())
 				.setIssuedAt(new java.util.Date())
-				.setExpiration(Date.valueOf(LocalDate.now().plusWeeks(2)))
+				.setExpiration(Date.valueOf(LocalDate.now().plusDays(jwtConfig.getTokenExpirationAfterDays())))
 				.signWith(secretKey)
 				.compact();
 				
