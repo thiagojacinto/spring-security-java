@@ -38,7 +38,6 @@ public class JwtTokenVerifier extends OncePerRequestFilter {
 		this.secretKey = secretKey;
 	}
 
-
 	/*
 	 * Invoke THIS filter just ONCE for every single request from the client.
 	 * 
@@ -51,21 +50,21 @@ public class JwtTokenVerifier extends OncePerRequestFilter {
 			FilterChain filterChain)
 			throws ServletException, IOException {
 		
-		String authorizationHeader = request.getHeader(jwtConfig.getAuthorizationHeader());
+		String authorizationHeader = request.getHeader(this.jwtConfig.getAuthorizationHeader());
 		
 		// Verify if header is null or does NOT have `Bearer` at begining
-		if (Strings.isNullOrEmpty(authorizationHeader) || authorizationHeader.startsWith(jwtConfig.getTokenPrefix())) {
+		if (Strings.isNullOrEmpty(authorizationHeader) || !authorizationHeader.startsWith(this.jwtConfig.getTokenPrefix())) {
 			filterChain.doFilter(request, response);
 			return;
 		}
-		String token = authorizationHeader.replace(jwtConfig.getTokenPrefix(), "");
+		// Replaces `Bearer` for empty, from the token input header
+		String token = authorizationHeader.replace(this.jwtConfig.getTokenPrefix(), "");
 		
 		try {
 			
-			// Replaces `Bearer` for empty, from the token input header
 			
 			Jws<Claims> claimsJws = Jwts.parserBuilder()
-					.setSigningKey(secretKey)
+					.setSigningKey(this.secretKey)
 					.build()
 					.parseClaimsJws(token);
 			
@@ -73,6 +72,7 @@ public class JwtTokenVerifier extends OncePerRequestFilter {
 			String username = body.getSubject();
 			
 			// creates a list of every `authority` inside body:
+			@SuppressWarnings("unchecked")
 			var authorities = (List<Map<String, String>>) body.get("authorities");
 			
 			// populate a list of GrantedAuthorities with it
