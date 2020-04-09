@@ -3,12 +3,14 @@ package br.securityjava.securitylearn.jwt;
 import javax.crypto.SecretKey;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import io.jsonwebtoken.security.Keys;
 
 @Configuration
+@ConfigurationPropertiesScan("br.securityjava.securitylearn.jwt")
 public class JwtSecretKey {
 	
 	private final JwtConfig jwtConfig;
